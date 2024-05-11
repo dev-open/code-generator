@@ -67,3 +67,24 @@
 
   - 执行命令：`docker compose up -d`
 
+- 演示
+
+  ![image01](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433356075-125e65e3-721b-4398-ae8a-f88696d8dfc9.png?x-oss-process=image%2Fformat%2Cwebp)
+
+  ![image02](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433397157-32f3a665-25ea-4731-9907-bff91b9fb307.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image03](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433411192-522887d3-8053-4195-b6ec-b7626ed6e543.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image04](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433427333-e61f9bf2-aef2-4655-a4f9-fed2afbadd5f.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image05](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433444151-c809f824-360a-4c61-8a0f-3581f9685447.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image06](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433528207-293fef7c-19f6-4443-9ead-0cc1f2bb295d.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image07](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433544889-5477c64a-ef3a-480f-957b-a795b2e05391.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image08](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433574522-02439758-9464-4dbb-8230-2e91bd893d2c.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image09](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433614916-32277219-05a0-4b52-9ed3-a53def3f987f.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+
+  ![image10](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433654515-9d05a475-45c8-49d0-840e-84fa1e2262cb.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
