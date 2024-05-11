@@ -31,14 +31,14 @@
 
 - 部署
 
-  - docker镜像：`ccr.ccs.tencentyun.com/dev-001/code-generator:latest`
+  - docker镜像：`ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:latest`
 
   - `docker-compose.yml`示例
 
     ```yaml
     services:
       code-generator:
-        image: ccr.ccs.tencentyun.com/dev-001/code-generator:latest
+        image: ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:latest
         container_name: code-generator
         ports:
           - "8081:8080"
