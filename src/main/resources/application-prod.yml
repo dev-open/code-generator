@@ -1,0 +1,73 @@
+# spring
+spring:
+  application:
+    name: code-generator
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+  jackson:
+    default-property-inclusion: non_null
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  controller:
+    path-prefix: /code/gen/api
+
+# log
+logging:
+  config: ${LOGGING_CONFIG:/app/logback.xml}
+
+# swagger
+springdoc:
+  api-docs:
+    enabled: true
+    path: /docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  group-configs:
+    - group: 'all'
+      paths-to-match: '/code/gen/api/**'
+      paths-to-exclude: '/code/gen/api/gitlab/**'
+    - group: 'template'
+      paths-to-match: '/code/gen/api/template/**'
+    - group: 'generator'
+      paths-to-match: '/code/gen/api/generator/**'
+    - group: 'parameter-util'
+      paths-to-match: '/code/gen/api/parameter-util/**'
+    - group: 'user'
+      paths-to-match: '/code/gen/api/user/**'
+
+# code-generator
+code:
+  gen:
+    gitlab:
+      url: ${CODE_GEN_GITLAB_URL}
+      group-name: ${CODE_GEN_GITLAB_GROUP_NAME}
+      pat: ${CODE_GEN_GITLAB_PAT}
+    lsp:
+      enabled: false
+---
+# OAuth2
+# https://docs.gitlab.com/ee/api/oauth2.html
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          gitlab:
+            provider: gitlab
+            client-name: code-generator
+            authorization-grant-type: authorization_code
+            client-id: ${OAUTH2_GITLAB_CLIENT_ID}
+            client-secret: ${OAUTH2_GITLAB_CLIENT_SECRET}
+            redirect-uri: ${OAUTH2_GITLAB_REDIRECT_URI}
+            scope:
+              - read_user
+        provider:
+          gitlab:
+            authorization-uri: ${code.gen.gitlab.url}/oauth/authorize
+            token-uri: ${code.gen.gitlab.url}/oauth/token
+            user-info-uri: ${code.gen.gitlab.url}/api/v4/user
+            user-name-attribute: username
+

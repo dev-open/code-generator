@@ -1,0 +1,42 @@
+{
+  "title": "TemplateParameters.schema.json",
+  "description": "TemplateParameters Json Schema",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/parameter"
+  },
+  "minItems": 1,
+  "uniqueItems": true,
+  "$defs": {
+    "parameter": {
+      "type": "object",
+      "required": [ "name", "enable", "desc" ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "参数名",
+          "minLength": 1,
+          "maxLength": 20
+        },
+        "value": {
+          "type": ["object", "string", "array", "number", "boolean", "null"],
+          "description": "参数值"
+        },
+        "defaultValue": {
+          "type": ["object", "string", "array", "number", "boolean", "null"],
+          "description": "默认值"
+        },
+        "enable": {
+          "type": "boolean",
+          "description": "是否启用"
+        },
+        "desc": {
+          "type": "string",
+          "description": "描述",
+          "minLength": 1,
+          "maxLength": 150
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+      client:
+        config:
+          default:
+            logger-level: basic
+            connect-timeout: 30000
+            read-timeout: 10000
+          # Gitlab 客户端
+          gitlab:
+            url: ${code.gen.gitlab.url}/api/v4

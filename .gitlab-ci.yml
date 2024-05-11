@@ -1,0 +1,46 @@
+variables:
+  JAVA_HOME:
+    value: /usr/lib/java/amazon-corretto-17.0.11.9.1-linux-x64/
+    description: "Java Home"
+  IMAGE_VERSION:
+    value: latest
+    description: "Docker镜像版本"
+
+stages:
+  - Build
+  - BuildAndPushImage
+
+build-job:
+  stage: Build
+  before_script:
+    - echo "Start build jar"
+  script:
+    - export JAVA_HOME="$JAVA_HOME"
+    - chmod +x ./gradlew
+    - ./gradlew -x test clean build
+  rules:
+    - when: manual
+  artifacts:
+    when: on_success
+    name: code-generator
+    paths:
+      - build/libs/code-generator-0.0.1.jar
+    expire_in: 1 day
+  after_script:
+    - echo "End build jar"
+
+build-push-image-job:
+  stage: BuildAndPushImage
+  before_script:
+    - echo "Start build code-generator image and push to CCR"
+  script:
+    - docker build -t code-generator:latest .
+    - docker tag code-generator:latest ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:$IMAGE_VERSION
+    - docker push ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:$IMAGE_VERSION
+    - docker rmi ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:$IMAGE_VERSION
+    - docker rmi code-generator:latest
+  rules:
+    - when: on_success
+  after_script:
+    - echo "End build code-generator image and push to CCR"
+

@@ -1,0 +1,78 @@
+server:
+  port: 8081
+
+# spring
+spring:
+  application:
+    name: code-generator
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+  jackson:
+    default-property-inclusion: non_null
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  controller:
+    path-prefix: /code/gen/api
+
+# swagger
+springdoc:
+  api-docs:
+    enabled: true
+    path: /docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  group-configs:
+    - group: 'all'
+      paths-to-match: '/code/gen/api/**'
+      paths-to-exclude: '/code/gen/api/gitlab/**'
+    - group: 'template'
+      paths-to-match: '/code/gen/api/template/**'
+    - group: 'generator'
+      paths-to-match: '/code/gen/api/generator/**'
+    - group: 'parameter-util'
+      paths-to-match: '/code/gen/api/parameter-util/**'
+    - group: 'user'
+      paths-to-match: '/code/gen/api/user/**'
+    - group: 'system'
+      paths-to-match: '/code/gen/api/system/**'
+
+# code-generator
+code:
+  gen:
+    gitlab:
+      url: https://gitlab.com
+      group-name: code-gen-group
+      pat: ********
+    lsp:
+      home: D:\dev\tmp\jdt-language-server-1.9.0-202203031534
+      client-port: 8082
+      client-host: 127.0.0.1
+      workspace: D:\dev\tmp\jdt-language-server-1.9.0-202203031534\data
+      enabled: false
+---
+# OAuth2
+# https://docs.gitlab.com/ee/api/oauth2.html
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          gitlab:
+            provider: gitlab
+            client-name: code-generator
+            authorization-grant-type: authorization_code
+            client-id: ********
+            client-secret: ********
+            redirect-uri: http://127.0.0.1:8081/login/oauth2/code/gitlab
+            scope:
+              - read_user
+        provider:
+          gitlab:
+            authorization-uri: ${code.gen.gitlab.url}/oauth/authorize
+            token-uri: ${code.gen.gitlab.url}/oauth/token
+            user-info-uri: ${code.gen.gitlab.url}/api/v4/user
+            user-name-attribute: username
+

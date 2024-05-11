@@ -1,0 +1,1 @@
+import{_ as e,k as c,s}from"./index-D44JGiXO.js";const r={},a={src:"/swagger-ui/index.html",width:"100%",frameborder:"0",class:"api-docs"};function t(o,n){return s(),c("iframe",a)}const d=e(r,[["render",t],["__scopeId","data-v-6c25a035"]]);export{d as default};
