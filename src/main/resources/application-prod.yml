@@ -49,6 +49,13 @@ code:
       pat: ${CODE_GEN_GITLAB_PAT}
     lsp:
       enabled: false
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 ---
 # OAuth2
 # https://docs.gitlab.com/ee/api/oauth2.html
