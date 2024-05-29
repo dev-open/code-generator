@@ -12,7 +12,6 @@ import com.lee.code.gen.util.MessageUtil;
 import com.lee.code.gen.util.WebUtil;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

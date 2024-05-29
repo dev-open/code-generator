@@ -37,6 +37,8 @@ springdoc:
       paths-to-match: '/code/gen/api/parameter-util/**'
     - group: 'user'
       paths-to-match: '/code/gen/api/user/**'
+    - group: 'system'
+      paths-to-match: '/code/gen/api/system/**'
 
 # code-generator
 code:
@@ -47,6 +49,13 @@ code:
       pat: ${CODE_GEN_GITLAB_PAT}
     lsp:
       enabled: false
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 ---
 # OAuth2
 # https://docs.gitlab.com/ee/api/oauth2.html

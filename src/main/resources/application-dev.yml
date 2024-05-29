@@ -52,6 +52,13 @@ code:
       client-host: 127.0.0.1
       workspace: D:\dev\tmp\jdt-language-server-1.9.0-202203031534\data
       enabled: false
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 ---
 # OAuth2
 # https://docs.gitlab.com/ee/api/oauth2.html

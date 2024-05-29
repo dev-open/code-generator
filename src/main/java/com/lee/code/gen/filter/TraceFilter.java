@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.util.StopWatch;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class TraceFilter extends RestFilter {
@@ -51,12 +53,21 @@ public class TraceFilter extends RestFilter {
             MDC.put(Constants.MDC_REMOTE_IP, remoteIP);
             TTL_MDC.get().put(Constants.MDC_TRACE_ID, traceId);
             TTL_MDC.get().put(Constants.MDC_REMOTE_IP, remoteIP);
-            log.info("Generated TraceId: {}", TTL_MDC.get().get(Constants.MDC_TRACE_ID));
-            filterChain.doFilter(request, response);
+            log.debug("Generated TraceId: {}", TTL_MDC.get().get(Constants.MDC_TRACE_ID));
+            doNext(filterChain, request, response, traceId);
         } finally {
             MDC.clear();
             TTL_MDC.get().clear();
             TTL_MDC.remove();
         }
+    }
+
+    private void doNext(FilterChain filterChain, HttpServletRequest request, HttpServletResponse response, String requestId) throws ServletException, IOException {
+        // API 耗时统计
+        StopWatch stopWatch = new StopWatch(requestId);
+        stopWatch.start();
+        filterChain.doFilter(request, response);
+        stopWatch.stop();
+        log.info("api: {} {} | status: {} | time: {}ms", request.getMethod(), request.getRequestURI(), response.getStatus(), stopWatch.getTotalTime(TimeUnit.MILLISECONDS));
     }
 }

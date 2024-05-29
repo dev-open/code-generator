@@ -38,7 +38,8 @@ public class ServerSecurityConfig {
     public SecurityFilterChain oauth2(HttpSecurity http) throws Exception {
         RequestMatcher[] permitRequestMatchers = {
                 new AntPathRequestMatcher("/login"),
-                new AntPathRequestMatcher("/login.html")
+                new AntPathRequestMatcher("/login.html"),
+                new AntPathRequestMatcher("/actuator/health")
         };
         http
                 .authorizeHttpRequests(authorize -> {
