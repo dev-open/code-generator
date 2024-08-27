@@ -45,12 +45,8 @@ code:
     gitlab:
       url: https://gitlab.com
       group-name: code-gen-group
-      pat: ********
+      pat: ${CODE_GEN_GITLAB_PAT}
     lsp:
-      home: D:\dev\tmp\jdt-language-server-1.9.0-202203031534
-      client-port: 8082
-      client-host: 127.0.0.1
-      workspace: D:\dev\tmp\jdt-language-server-1.9.0-202203031534\data
       enabled: false
 
 # actuator
@@ -71,8 +67,8 @@ spring:
             provider: gitlab
             client-name: code-generator
             authorization-grant-type: authorization_code
-            client-id: ********
-            client-secret: ********
+            client-id: 6252b5fac09dc0aab6f93debe1ed2cc634b882f9d182eebfff5321a95b44e472
+            client-secret: ${OAUTH2_GITLAB_CLIENT_SECRET}
             redirect-uri: http://127.0.0.1:8081/login/oauth2/code/gitlab
             scope:
               - read_user

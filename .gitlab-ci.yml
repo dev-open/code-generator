@@ -43,4 +43,3 @@ build-push-image-job:
     - when: on_success
   after_script:
     - echo "End build code-generator image and push to CCR"
-
