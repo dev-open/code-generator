@@ -59,6 +59,7 @@ public class TraceFilter extends RestFilter {
             MDC.clear();
             TTL_MDC.get().clear();
             TTL_MDC.remove();
+
         }
     }
 

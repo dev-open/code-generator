@@ -11,9 +11,9 @@ services:
     environment:
       CODE_GEN_GITLAB_URL: https://gitlab.com
       CODE_GEN_GITLAB_GROUP_NAME: code-gen-group
-      CODE_GEN_GITLAB_PAT: ********
-      OAUTH2_GITLAB_CLIENT_ID: ********
-      OAUTH2_GITLAB_CLIENT_SECRET: ********
+      CODE_GEN_GITLAB_PAT:
+      OAUTH2_GITLAB_CLIENT_ID:
+      OAUTH2_GITLAB_CLIENT_SECRET:
       OAUTH2_GITLAB_REDIRECT_URI: http://127.0.0.1:8081/login/oauth2/code/gitlab
     volumes:
       - ./logs:/app/logs
