@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -176,5 +177,15 @@ public class RestExceptionHandler {
         String ip = WebUtil.getRemoteIP();
         log.warn("API: {}[{}], IP: {}, 实行频率限制（{}次/{}{}）", request.getMethod(), request.getRequestURI(), ip, e.getRate(), e.getInterval(), e.getUnit().name());
         return R.optFail(CodeEnum.RCD20003.getCode(), ip);
+    }
+
+    /**
+     * 拒绝访问异常
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R<Object> exception(AccessDeniedException e) {
+        log.debug(e.getMessage(), e);
+        return R.optFail(CodeEnum.RCD20005.getCode());
     }
 }

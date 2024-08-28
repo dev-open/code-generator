@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +51,7 @@ public class ParameterUtilController {
     })
     @GetMapping("/entity")
     @IPRateLimiter(rate = 6, interval = 10)
+    @PreAuthorize("@pms.hasAnyPermission('allParameterUtilPermissions', 'getTableEntity')")
     public List<String> getTableEntity(@RequestParam @NotBlank String tableName, @RequestParam @NotBlank String accessToken) {
         List<String> response = new ArrayList<>();
         dbService.queryTableWithColumns(tableName, accessToken).forEach(t ->
@@ -58,9 +60,9 @@ public class ParameterUtilController {
     }
 
     @Operation(summary = "下载模板参数-数据库表对应的实体信息", description = "下载模板参数-数据库表对应的实体信息")
-
     @GetMapping("/entity/download")
     @IPRateLimiter(rate = 6, interval = 10)
+    @PreAuthorize("@pms.hasAnyPermission('allParameterUtilPermissions', 'downloadJsonTableEntity')")
     public void downloadEntityParameter(@RequestParam @NotBlank String tableName, @RequestParam @NotBlank String accessToken) {
         TemplateParameter parameter = new TemplateParameter();
         parameter.setEnable(true);
@@ -73,6 +75,7 @@ public class ParameterUtilController {
     @Operation(summary = "获取数据库表信息", description = "获取数据库表信息")
     @PostMapping("/tables")
     @IPRateLimiter(rate = 4, interval = 10)
+    @PreAuthorize("@pms.hasAnyPermission('allParameterUtilPermissions', 'getTables')")
     public List<GetTableResponseDto> getTables(@RequestBody GetTableRequestDto requestDto) {
         return dbService.queryTable(requestDto);
     }

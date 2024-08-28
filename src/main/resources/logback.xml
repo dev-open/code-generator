@@ -53,7 +53,7 @@
     <springProfile name="prod">
         <logger name="com.lee" level="debug" />
         <!-- Spring framework logger -->
-        <logger name="org.springframework" level="debug" />
+        <logger name="org.springframework" level="info" />
         <root level="info">
             <appender-ref ref="console" />
             <appender-ref ref="file" />

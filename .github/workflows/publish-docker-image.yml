@@ -1,0 +1,107 @@
+name: Publish Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      imageTag:
+        description: 'docker image tag'
+        type: string
+        required: true
+        default: latest
+      registry:
+        description: 'select registry'
+        type: choice
+        default: registry.cn-hangzhou.aliyuncs.com/opensrcdevelop/code-generator
+        options:
+          - ccr.ccs.tencentyun.com/opensrcdevelop/code-generator
+          - registry.cn-hangzhou.aliyuncs.com/opensrcdevelop/code-generator
+      createGitTag:
+        description: 'create git tag'
+        type: boolean
+        default: false
+
+env:
+  REPO_OPENSRCDEVELOP_PASSWORD: ${{ secrets.REPO_OPENSRCDEVELOP_PASSWORD }}
+
+jobs:
+  build-jar:
+    name: Build Jar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: Build With Gradle Wrapper
+        run: |
+          chmod +x ./gradlew
+          ./gradlew -x test build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodeGen Artifacts
+          path: |
+            ./build/libs
+            ./Dockerfile
+
+  build-push-docker-image:
+    name: Build And Push Docker Image
+    needs: build-jar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: CodeGen Artifacts
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ inputs.registry }}:${{ inputs.imageTag }} .
+
+      - name: Login Registry
+        run: |
+          if [ ${{ inputs.registry }} == 'ccr.ccs.tencentyun.com/opensrcdevelop/code-generator' ]; then
+            echo "Login CCR"
+            docker login -u ${{ secrets.CCR_USERNAME }} -p '${{ secrets.CCR_PASSWORD }}' ${{ inputs.registry }}
+          elif [ ${{ inputs.registry }} == 'registry.cn-hangzhou.aliyuncs.com/opensrcdevelop/code-generator' ]; then
+            echo "Login ACR"
+            docker login -u ${{ secrets.ACR_USERNAME }} -p '${{ secrets.ACR_PASSWORD }}' ${{ inputs.registry }}
+          fi
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ inputs.registry }}:${{ inputs.imageTag }}
+
+  create-git-tag:
+    name: Create Git Tag
+    permissions: write-all
+    if: inputs.createGitTag
+    needs:
+      - build-push-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Git
+        run: |
+          git config --global user.email "${{ secrets.USER_EMAIL }}"
+          git config --global user.name "GitHub Action"
+
+      - name: Create Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag_name="${{ inputs.imageTag }}"
+          git tag -a ${tag_name} -m "Automatic tag creation on ${GITHUB_SHA}"
+          echo "Pushing tag ${tag_name}"
+          git push origin ${tag_name}
