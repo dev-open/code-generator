@@ -3,7 +3,6 @@
 
 FROM amazoncorretto:17.0.11-alpine3.16
 COPY ./build/libs/code-generator-0.0.1.jar /app/app.jar
-COPY ./src/main/resources/logback.xml /app/logback.xml
 ENV LANG C.UTF-8
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/'$TZ' /etc/localtime && echo '$TZ' > /etc/timezone

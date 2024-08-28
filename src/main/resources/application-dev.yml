@@ -72,10 +72,24 @@ spring:
             redirect-uri: http://127.0.0.1:8081/login/oauth2/code/gitlab
             scope:
               - read_user
+          auth-server:
+            provider: auth-server
+            client-name: code-generator
+            authorization-grant-type: authorization_code
+            client-id: d196f335-be2d-4231-a183-e047ba834cdd
+            client-secret: ${OAUTH2_AUTH_SERVER_CLIENT_SECRET}
+            redirect-uri: http://127.0.0.1:8081/login/oauth2/code/auth-server
+            scope:
+              - openid
+
         provider:
           gitlab:
             authorization-uri: ${code.gen.gitlab.url}/oauth/authorize
             token-uri: ${code.gen.gitlab.url}/oauth/token
             user-info-uri: ${code.gen.gitlab.url}/api/v4/user
             user-name-attribute: username
-
+          auth-server:
+            authorization-uri: ${auth.client.issuer}/oauth2/authorize
+            token-uri: ${auth.client.issuer}/oauth2/token
+            jwk-set-uri: ${auth.client.issuer}/oauth2/jwks
+            user-name-attribute: username
