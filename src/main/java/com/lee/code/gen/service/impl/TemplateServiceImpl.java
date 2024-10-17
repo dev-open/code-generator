@@ -254,10 +254,11 @@ public class TemplateServiceImpl implements TemplateService {
      * @param projId 项目 ID
      * @param ref 分支、标签或提交的名称
      * @param requestParameters 参数
+     * @param updateExisted 是否更新已存在的参数
      */
     @Override
     @CacheEvict(key = "#projId + '_' + #ref", cacheNames = TEMPLATE_PARAMETER_CACHE_NAME)
-    public void setParameters(Integer projId, String ref, List<TemplateParameterRequestDto> requestParameters) {
+    public void setParameters(Integer projId, String ref, List<TemplateParameterRequestDto> requestParameters, boolean updateExisted) {
         try {
             // 1. 获取配置文件
             TemplateConfig templateConfig = getTemplateConfig(projId, ref);
@@ -271,7 +272,9 @@ public class TemplateServiceImpl implements TemplateService {
                 var param = tmpParams.get(pName);
                 // 2.1 更新已存在的模板参数
                 if (param != null) {
-                    editParam(p, param);
+                    if (updateExisted) {
+                        editParam(p, param);
+                    }
                     tmpParams.remove(pName);
                 }
             });
@@ -498,7 +501,7 @@ public class TemplateServiceImpl implements TemplateService {
     public void importParameters(Integer projId, String ref, String parametersJson) {
         var requestParams =  Try.of(() -> objectMapper.readValue(parametersJson, new TypeReference<List<TemplateParameterRequestDto>>() {}))
                 .getOrElseThrow(ServerException::new);
-        setParameters(projId, ref, requestParams);
+        setParameters(projId, ref, requestParams, true);
     }
 
     /**
