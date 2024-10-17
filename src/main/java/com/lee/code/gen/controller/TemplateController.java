@@ -197,6 +197,7 @@ public class TemplateController {
 
     @Operation(summary = "创建模板", description = "创建模板")
     @PostMapping
+    @Authorize({ "allTemplatePermissions", "createTemplate" })
     public void createTemplate(@RequestBody @Valid CreateTemplateRequestDto requestDto) {
         templateService.createTemplate(requestDto.getTemplateName() + ".ftl", requestDto.getProjId(), Constants.EMPTY_STRING, requestDto.getTargetPath(), Constants.EMPTY_STRING);
     }
@@ -207,6 +208,7 @@ public class TemplateController {
             @Parameter(name = "id", description = "模板工程ID", in = ParameterIn.PATH),
             @Parameter(name = "ref", description = "分支、标签或提交的名称", in = ParameterIn.QUERY)
     })
+    @Authorize({ "allTemplateParametersPermissions", "createTemplateParameter" })
     public void createTemplateParameter(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref, @RequestBody @Valid TemplateParameterRequestDto requestDto) {
         templateService.setParameters(id, ref, List.of(requestDto), false);
     }
