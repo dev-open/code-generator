@@ -1,1 +1,0 @@
-import{d as e}from"./main-BXnMjZ8k.js";const r=e("template",{state(){return{projId:0,content:"",path:"",name:""}},actions:{saveData(){localStorage.setItem("template",JSON.stringify(this.$state))},getData(){const t=localStorage.getItem("template");return t?JSON.parse(t):this.$state}}});export{r as u};

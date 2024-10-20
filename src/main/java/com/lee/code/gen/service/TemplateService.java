@@ -21,7 +21,7 @@ public interface TemplateService {
 
     List<TemplateParameter> getParameters(Integer projId, String ref);
 
-    void setParameters(Integer projId, String ref, List<TemplateParameterRequestDto> parameters);
+    void setParameters(Integer projId, String ref, List<TemplateParameterRequestDto> parameters, boolean updateExisted);
 
     RPage<List<TemplateProjResponseDto>> getTemplateProjs(String search, String orderBy, Integer page, Integer perPage, String ref);
 

@@ -1,6 +1,7 @@
 package com.lee.code.gen.config;
 
 import com.lee.code.gen.core.OAuth2LoginSuccessHandler;
+import com.lee.code.gen.core.OAuth2UnLoginHandler;
 import com.lee.code.gen.filter.SubAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,10 @@ public class ServerSecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .successHandler(new OAuth2LoginSuccessHandler(oAuth2AuthorizedClientService)));
+
+        http.exceptionHandling(exceptionHandler -> {
+            exceptionHandler.authenticationEntryPoint(new OAuth2UnLoginHandler());
+        });
         http.addFilterBefore(new SubAuthenticationFilter(), AuthorizationFilter.class);
         return http.build();
     }

@@ -1,90 +1,74 @@
 # Code Generator（代码生成器）
 
-※个人学习项目，仅作交流学习用
+基于模板引擎（[**FreeMarker**](http://freemarker.foofun.cn/)）自定义模板文件和参数完成模板填充，使用 GitLab 作为存储服务。
 
-基于模板引擎（[FreeMarker](http://freemarker.foofun.cn/)）自定义模板文件和参数完成模板填充，结合Gitlab完成模板的存储和用户认证。
+### 主要技术
 
-- 已完成的功能
+- Java 17
+- Gradle
+- SpringBoot 3
+- Spring Security
+- Open Feign
+- Caffeine
+- Monaco Editor
 
-  - 基于OpenFeign实现对Gitlab相关API的操作
-    - 结合Spring-Retry实现超时重试机制
-    - 自定义Decoder在反序列化响应对象的同时，存储ResponseHeader的信息
-  - 模板工程的创建和删除
-    - 实现版本的自动递增
-  - 上传模板文件和参数（json文件）
-    - 基于json-schema-validator完成对模板参数的校验
-  - 基于MonacoEditor编辑器实现模板的在线编辑
-  - 支持模板参数以默认值填充
-    - 将模板参数以json字符串的形式存储，支持自定义任意json格式的模板参数
-  - 根据设置的模板参数，填充模板后生成代码
-    - 支持每个模板文件自定义生成代码的路径，路径支持参数填充
-      - 自定义Validator实现对路径格式的校验
-    - 支持预览生成的代码
-      - 实现生成代码的树形结构展示
-  - 模板参数工具
-    - 基于JDBC数据库连接的元信息，获取数据库及表的信息，转换为Java实体
-      - 以json的形式展示
-      - 支持导出为模板参数
-  - 基于SpringOAuthClient实现第三方Gitlab账户的认证
-  - 基于本地缓存Caffeine实现API访问频率限制（按IP）
-  - 基于GitlabCI实现持续集成
+### 功能概述
 
-- 部署
+- 模板管理
 
-  - docker镜像：`ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:latest`
+  创建模板工程，自定义 ftl 模板文件和模板参数，设置模板参数，由 FreeMarker 完成模板渲染，实现生成代码。
 
-  - `docker-compose.yml`示例
+  - 基于Open Feign 实现对 GitLab 相关 API 的操作
+  - 模板工程、模板参数的增删改查
+    - 支持上传本地模板文件或创建空白模板（ftl 格式）
+    - 支持导入模板参数文件（json 格式），基于 json-schema-validator 完成参数校验，批量添加或更新模板参数
+      - 参数值以 json 数据存储，支持：object、string、array、number、boolean、null
+    - 支持模板文件自定义生成代码的路径，路径支持参数填充
+    - 支持模板文件的在线编辑
+  - 生成代码
+    - 支持预览或下载代码
+    - 支持预览代码的树形结构展示
+  - 基于 Caffeine 实现响应结果的缓存，避免重复的 GitLab 请求
+  - 基于 Spring Security OAuth2 Client 集成 [**Auth Server**](https://github.com/opensrcdevelop/auth)，实现用户认证和权限控制
 
-    ```yaml
-    services:
-      code-generator:
-        image: ccr.ccs.tencentyun.com/opensrcdevelop/code-generator:latest
-        container_name: code-generator
-        ports:
-          - "8081:8080"
-        restart: on-failure
-        environment:
-          CODE_GEN_GITLAB_URL: https://gitlab.com
-          CODE_GEN_GITLAB_GROUP_NAME: code-gen-group
-          CODE_GEN_GITLAB_PAT: *******************
-          OAUTH2_GITLAB_CLIENT_ID: *******************
-          OAUTH2_GITLAB_CLIENT_SECRET: *******************
-          OAUTH2_GITLAB_REDIRECT_URI: http://127.0.0.1:8081/login/oauth2/code/gitlab
-        volumes:
-          - ./logs:/app/logs
-    ```
+- 模板参数工具
+  - 基于 JDBC 数据库连接的元信息，获取数据库及表的信息，转换为代码生成器支持的模板参数
 
-  - 环境变量说明
+### 持续集成
 
-    - CODE_GEN_GITLAB_URL：Gitlab访问地址
-    - CODE_GEN_GITLAB_GROUP_NAME：Gitlab群组名
-    - CODE_GEN_GITLAB_PAT：Gitlab个人访问令牌
-      - scope：api
-    - OAUTH2_GITLAB_CLIENT_ID：Gitlab应用ID
-    - OAUTH2_GITLAB_CLIENT_SECRET：Gitlab应用密钥
-    - OAUTH2_GITLAB_REDIRECT_URI：Gitlab应用回调地址
-      - /login/oauth2/code/gitlab：固定地址
+基于 [**GitHub Actions**](https://docs.github.com/zh/actions) 实现持续集成（CI），自动编译、打包、构建 Docker 镜像、发布到镜像仓库。
 
-  - 执行命令：`docker compose up -d`
+### 演示截图
 
-- 演示
+登录
 
-  ![image01](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433356075-125e65e3-721b-4398-ae8a-f88696d8dfc9.png?x-oss-process=image%2Fformat%2Cwebp)
+![](/docs/img/login.png)
 
-  ![image02](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433397157-32f3a665-25ea-4731-9907-bff91b9fb307.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+模板工程列表
 
-  ![image03](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433411192-522887d3-8053-4195-b6ec-b7626ed6e543.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+![](docs/img/template-proj-list.png)
 
-  ![image04](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433427333-e61f9bf2-aef2-4655-a4f9-fed2afbadd5f.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+模板列表
 
-  ![image05](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433444151-c809f824-360a-4c61-8a0f-3581f9685447.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+![](docs/img/template-list.png)
 
-  ![image06](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433528207-293fef7c-19f6-4443-9ead-0cc1f2bb295d.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+模板文件在线编辑
 
-  ![image07](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433544889-5477c64a-ef3a-480f-957b-a795b2e05391.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+![](docs/img/edit-template.png)
 
-  ![image08](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433574522-02439758-9464-4dbb-8230-2e91bd893d2c.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+模板参数
 
-  ![image09](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433614916-32277219-05a0-4b52-9ed3-a53def3f987f.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+![](docs/img/template-parameter.png)
 
-  ![image10](https://cdn.nlark.com/yuque/0/2024/png/27242554/1715433654515-9d05a475-45c8-49d0-840e-84fa1e2262cb.png?x-oss-process=image%2Fformat%2Cwebp%2Fresize%2Cw_1500%2Climit_0)
+设置模板参数
+
+![](docs/img/set-template-parameter.png)
+
+预览生成的代码
+
+![](docs/img/preview-generated-code.png)
+
+获取数据库表对应的实体模板参数
+
+![](docs/img/get-table-entity.png)
+

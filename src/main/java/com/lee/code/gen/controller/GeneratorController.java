@@ -1,5 +1,6 @@
 package com.lee.code.gen.controller;
 
+import cn.opensrcdevelop.auth.client.authorize.annoation.Authorize;
 import com.lee.code.gen.annoation.RestResponse;
 import com.lee.code.gen.common.Constants;
 import com.lee.code.gen.core.entity.TemplateFileTree;
@@ -14,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +40,7 @@ public class GeneratorController {
             @Parameter(name = "ref", description = "分支、标签或提交的名称", in = ParameterIn.QUERY),
     })
     @GetMapping("/download/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allGeneratorPermissions', 'downloadGeneratedCode')")
+    @Authorize({ "allGeneratorPermissions", "downloadGeneratedCode" })
     public void download(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref, HttpServletResponse response) {
 
         try (ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -65,7 +65,7 @@ public class GeneratorController {
             @Parameter(name = "ref", description = "分支、标签或提交的名称", in = ParameterIn.QUERY),
     })
     @GetMapping("/parameters/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allGeneratorPermissions', 'getAvaliableTemplateParameters')")
+    @Authorize({ "allGeneratorPermissions", "getAvailableTemplateParameters" })
     public List<TemplateParameter> getAvailableParameters(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref) {
         return generatorService.getAvailableParameters(id, ref);
     }
@@ -76,7 +76,7 @@ public class GeneratorController {
             @Parameter(name = "ref", description = "分支、标签或提交的名称", in = ParameterIn.QUERY),
     })
     @GetMapping("/preview/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allGeneratorPermissions', 'previewGeneratedCode')")
+    @Authorize({ "allGeneratorPermissions", "previewGeneratedCode" })
     public List<TemplateFileTree> preview(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref) {
         return generatorService.preview(id, ref);
     }

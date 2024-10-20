@@ -59,4 +59,6 @@ public class Constants {
     public static final String JSON_SCHEMA_TEMPLATE_PARAMETERS = "TemplateParameters.schema.json";
 
     public static final String TARGET_PATH_REGEX = "^(?!/)(?:/?(?:[-_a-zA-Z0-9]*\\$\\{[a-zA-Z0-9.]+\\}[-_a-zA-Z0-9]*)*[-_a-zA-Z0-9]*)+(?<!/)(?:.(?:[a-zA-Z]+))?$";
+    public static final String TEMPLATE_FILENAME_REGX = "^[-_a-zA-Z0-9]+$";
+    public static final String TEMPLATE_PARAM_REGX = "^[a-zA-Z0-9]+$";
 }

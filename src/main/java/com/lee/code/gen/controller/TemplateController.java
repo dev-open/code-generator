@@ -1,5 +1,6 @@
 package com.lee.code.gen.controller;
 
+import cn.opensrcdevelop.auth.client.authorize.annoation.Authorize;
 import com.lee.code.gen.annoation.IPRateLimiter;
 import com.lee.code.gen.annoation.RestResponse;
 import com.lee.code.gen.common.Constants;
@@ -44,7 +45,7 @@ public class TemplateController {
 
     @Operation(summary = "新建模板工程", description = "新建模板工程")
     @PostMapping("/projs")
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateProjsPermissions', 'createTemplateProj')")
+    @Authorize({ "allTemplateProjsPermissions", "createTemplateProj" })
     public void createTemplateProj(@RequestBody @Valid CreateTemplateProjRequestDto requestDto) {
         templateService.createTemplateProj(requestDto.getProjName(), TemplateUtil.getUsername(), requestDto.getDesc());
     }
@@ -52,7 +53,7 @@ public class TemplateController {
     @Operation(summary = "上传模板", description = "上传模板")
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @IPRateLimiter(1)
-    @PreAuthorize("@pms.hasAnyPermission('allTemplatePermissions', 'uploadTemplate')")
+    @Authorize({ "allTemplatePermissions", "uploadTemplate" })
     public void uploadTemplateFile(@Valid UploadTemplateRequestDto requestDto) {
         try {
             var templateFile = requestDto.getTemplateFile();
@@ -76,7 +77,7 @@ public class TemplateController {
     @Operation(summary = "获取模板内容", description = "获取模板内容")
     @GetMapping
     @IPRateLimiter(rate = 6, interval = 10)
-    @PreAuthorize("@pms.hasAnyPermission('allTemplatePermissions', 'getTemplateContent')")
+    @Authorize({ "allTemplatePermissions", "getTemplateContent" })
     public TemplateInfo getTemplate(@Valid GetTemplateRequestDto requestDto) {
         return templateService.getTemplate(requestDto.getProjId(), requestDto.getTemplatePath(), requestDto.getRef());
     }
@@ -88,7 +89,7 @@ public class TemplateController {
     })
     @GetMapping("/parameters/{id}")
     @IPRateLimiter(rate = 6, interval = 10)
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateParametersPermissions', 'listTemplateParameter')")
+    @Authorize({ "allTemplateParametersPermissions", "listTemplateParameter" })
     public List<TemplateParameter> getParameters(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref) {
         return templateService.getParameters(id, ref);
     }
@@ -99,9 +100,9 @@ public class TemplateController {
             @Parameter(name = "ref", description = "分支、标签或提交的名称", in = ParameterIn.QUERY)
     })
     @PutMapping("/parameters/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateParametersPermissions', 'setTemplateParameter')")
+    @Authorize({ "allTemplateParametersPermissions", "setTemplateParameter" })
     public void setParameters(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref, @RequestBody @Valid SetTemplateParametersRequestDto requestDto) {
-        templateService.setParameters(id, ref, requestDto.getParameters());
+        templateService.setParameters(id, ref, requestDto.getParameters(), true);
     }
 
     @Operation(summary = "获取模板工程", description = "获取模板工程")
@@ -112,7 +113,7 @@ public class TemplateController {
     })
     @GetMapping("/projs")
     @IPRateLimiter(rate = 6, interval = 10)
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateProjsPermissions', 'listTemplateProj')")
+    @Authorize({ "allTemplateProjsPermissions", "listTemplateProj" })
     public RPage<List<TemplateProjResponseDto>> getTemplateProjs(@RequestParam(required = false) String search, @RequestParam(required = false) @Min(1) Integer page, @RequestParam(required = false) @Min(1) @Max(100) Integer perPage) {
         return templateService.getTemplateProjs(search, null, page, perPage, Constants.DEFAULT_REF_MAIN);
     }
@@ -123,7 +124,7 @@ public class TemplateController {
     })
     @GetMapping("/configs/{id}")
     @IPRateLimiter(rate = 6, interval = 10)
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateConfigsPermissions', 'listTemplateConfigs')")
+    @Authorize({ "allTemplateConfigsPermissions", "listTemplateConfigs" })
     public List<TemplateConfigItem> getTemplateConfigs(@PathVariable Integer id) {
         return templateService.getTemplateConfigs(id, Constants.DEFAULT_REF_MAIN);
     }
@@ -131,7 +132,7 @@ public class TemplateController {
     @Operation(summary = "更新模板内容", description = "更新模板内容")
     @PutMapping
     @IPRateLimiter(rate = 8, interval = 10)
-    @PreAuthorize("@pms.hasAnyPermission('allTemplatePermissions', 'updateTemplateContent')")
+    @Authorize({ "allTemplatePermissions", "updateTemplateContent" })
     public void updateTemplateContent(@RequestBody @Valid UpdateTemplateContentRequestDto requestDto) {
         templateService.updateTemplateContent(requestDto.getProjId(), requestDto.getPath(), requestDto.getContent(), Constants.DEFAULT_REF_MAIN);
     }
@@ -142,7 +143,7 @@ public class TemplateController {
             @Parameter(name = "path", description = "模板路径", in = ParameterIn.QUERY),
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allTemplatePermissions', 'deleteTemplate')")
+    @Authorize({ "allTemplatePermissions", "deleteTemplate" })
     public void deleteTemplate(@PathVariable @NotNull Integer id, @RequestParam @NotBlank String path) {
         templateService.removeTemplate(id, path, Constants.DEFAULT_REF_MAIN);
     }
@@ -153,7 +154,7 @@ public class TemplateController {
             @Parameter(name = "name", description = "参数名", in = ParameterIn.QUERY),
     })
     @DeleteMapping("/parameters/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateParametersPermissions', 'deleteTemplateParameter')")
+    @Authorize({ "allTemplateParametersPermissions", "deleteTemplateParameter" })
     public void deleteParameter(@PathVariable @NotNull Integer id, @RequestParam @NotBlank String name) {
         templateService.removeParameter(id, name, Constants.DEFAULT_REF_MAIN);
     }
@@ -163,14 +164,14 @@ public class TemplateController {
             @Parameter(name = "id", description = "模板工程ID", in = ParameterIn.PATH),
     })
     @DeleteMapping("/projs/{id}")
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateProjsPermissions', 'deleteTemplateProj')")
+    @Authorize({ "allTemplateProjsPermissions", "deleteTemplateProj" })
     public void deleteProj(@PathVariable @NotNull Integer id) {
         templateService.removeTemplateProj(id);
     }
 
     @Operation(summary = "更新生成代码的目标路径", description = "更新生成代码的目标路径")
     @PutMapping("/configs/targetPath")
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateConfigsPermissions', 'updateTargetPath')")
+    @Authorize({ "allTemplateConfigsPermissions", "updateTargetPath" })
     public void updateTargetPath(@RequestBody @Valid UpdateTargetPathRequestDto requestDto) {
         templateService.setTargetPath(requestDto.getProjId(), Constants.DEFAULT_REF_MAIN, requestDto.getTemplatePath(), requestDto.getTargetPath());
     }
@@ -180,7 +181,7 @@ public class TemplateController {
     @Parameters({
             @Parameter(name = "id", description = "模板工程ID",  in = ParameterIn.PATH),
     })
-    @PreAuthorize("@pms.hasAnyPermission('allTemplateParametersPermissions', 'importTemplateParameter')")
+    @Authorize({ "allTemplateParametersPermissions", "importTemplateParameter" })
     public void importParameter(@PathVariable Integer id, @NotNull @FileType(extensions = "json") MultipartFile file) {
         try {
             if (!file.isEmpty()) {
@@ -194,4 +195,21 @@ public class TemplateController {
         }
     }
 
+    @Operation(summary = "创建模板", description = "创建模板")
+    @PostMapping
+    @Authorize({ "allTemplatePermissions", "createTemplate" })
+    public void createTemplate(@RequestBody @Valid CreateTemplateRequestDto requestDto) {
+        templateService.createTemplate(requestDto.getTemplateName() + ".ftl", requestDto.getProjId(), Constants.EMPTY_STRING, requestDto.getTargetPath(), Constants.EMPTY_STRING);
+    }
+
+    @Operation(summary = "创建模板参数", description = "创建模板参数")
+    @PostMapping("/parameters/{id}")
+    @Parameters({
+            @Parameter(name = "id", description = "模板工程ID", in = ParameterIn.PATH),
+            @Parameter(name = "ref", description = "分支、标签或提交的名称", in = ParameterIn.QUERY)
+    })
+    @Authorize({ "allTemplateParametersPermissions", "createTemplateParameter" })
+    public void createTemplateParameter(@PathVariable Integer id, @RequestParam(required = false, defaultValue = Constants.DEFAULT_REF_MAIN) String ref, @RequestBody @Valid TemplateParameterRequestDto requestDto) {
+        templateService.setParameters(id, ref, List.of(requestDto), false);
+    }
 }

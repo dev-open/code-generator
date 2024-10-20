@@ -54,7 +54,7 @@ dependencies {
     implementation 'io.vavr:vavr:0.10.4'
     implementation 'org.mybatis:mybatis:3.5.16'
     implementation 'com.zaxxer:HikariCP'
-    implementation 'cn.opensrcdevelop:auth-client-spring-boot-starter:1.0.0_beta'
+    implementation 'cn.opensrcdevelop:auth-client-spring-boot-starter:1.0.3_beta'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'

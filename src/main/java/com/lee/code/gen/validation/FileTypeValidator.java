@@ -24,12 +24,11 @@ public class FileTypeValidator implements ConstraintValidator<FileType, Object> 
 
         if (value instanceof MultipartFile multipartFile) {
             String fileName = multipartFile.getOriginalFilename();
-            String extension =  FilenameUtils.getExtension(fileName);
-            if (StringUtils.isNotEmpty(extension)) {
-                var ret = Arrays.stream(extensions).filter(extension::equals).findAny();
-                return ret.isPresent();
-            }
-            return false;
+            return checkExtension(fileName);
+        }
+
+        if (value instanceof String fileName) {
+            return checkExtension(fileName);
         }
         return true;
     }
@@ -37,5 +36,14 @@ public class FileTypeValidator implements ConstraintValidator<FileType, Object> 
     @Override
     public void initialize(FileType fileType) {
         extensions = fileType.extensions();
+    }
+
+    private boolean checkExtension(String fileName) {
+        String extension =  FilenameUtils.getExtension(fileName);
+        if (StringUtils.isNotEmpty(extension)) {
+            var ret = Arrays.stream(extensions).filter(extension::equals).findAny();
+            return ret.isPresent();
+        }
+        return false;
     }
 }

@@ -12,10 +12,16 @@ import com.lee.code.gen.util.MessageUtil;
 import com.lee.code.gen.util.WebUtil;
 import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,6 +33,7 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -187,5 +194,12 @@ public class RestExceptionHandler {
     public R<Object> exception(AccessDeniedException e) {
         log.debug(e.getMessage(), e);
         return R.optFail(CodeEnum.RCD20005.getCode());
+    }
+
+    @ExceptionHandler(OAuth2AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R<Object> exception(OAuth2AuthenticationException e) {
+        log.debug(e.getMessage(), e);
+        return R.optFail(CodeEnum.RCD20006.getCode());
     }
 }
